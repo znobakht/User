@@ -3,11 +3,37 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { loginSchema, registrationSchema } from "../../validation/validationSchemas.mjs";
 import User from "../../models/User.mjs";
+import authMiddleware from "../../middleware/authMiddleware.mjs";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.send("Hello World");
+// Route to get all users with pagination
+router.get("/", authMiddleware, async (req, res) => {
+  const page = parseInt(req.query.page) || 1; // Current page number, default to 1 if not provided
+  const limit = parseInt(req.query.limit) || 10; // Number of items per page, default to 10 if not provided
+
+  try {
+    // Query the database for users with pagination
+    const users = await User.find()
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    // Count total number of users
+    const totalUsers = await User.countDocuments();
+
+    // Calculate total number of pages
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    res.json({
+      users,
+      currentPage: page,
+      totalPages,
+      totalUsers
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 router.post("/", async (req, res) => {
   const { error, value } = registrationSchema.validate(req.body);
