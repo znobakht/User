@@ -14,7 +14,7 @@ router.get("/", authMiddleware, async (req, res) => {
 
   try {
     // Query the database for users with pagination
-    const users = await User.find()
+    const users = await User.find({}, { password: 0 })
       .skip((page - 1) * limit)
       .limit(limit);
 
@@ -35,6 +35,26 @@ router.get("/", authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+// Route to get a user by ID
+router.get("/:id", authMiddleware, async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    // Query the database for the user by ID
+    const user = await User.findById(userId, { password: 0 });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Respond with the user information
+    res.json({ user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 router.post("/", async (req, res) => {
   const { error, value } = registrationSchema.validate(req.body);
   if (error) {
