@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { editUserSchema, loginSchema, registrationSchema } from "../../validation/validationSchemas.mjs";
 import User from "../../models/User.mjs";
 import authMiddleware from "../../middleware/authMiddleware.mjs";
+import xss from "xss";
 
 const router = express.Router();
 
@@ -32,10 +33,10 @@ router.post("/", async (req, res) => {
 
     // Create a new user
     const newUser = new User({
-      name: value.name,
-      username: value.username,
-      email: value.email,
-      password: hashedPassword, // Note: In practice, you would hash the password before storing it
+      name: xss(value.name),
+      username: xss(value.username),
+      email: xss(value.email),
+      password: xss(hashedPassword), // Note: In practice, you would hash the password before storing it
     });
 
     // Save the new user to the database
@@ -153,8 +154,8 @@ router.put("/", authMiddleware, async (req, res) => {
     }
 
     // Update the user's information
-    currentUser.name = value.name || currentUser.name;
-    currentUser.username = value.username || currentUser.username;
+    currentUser.name = xss(value.name) || currentUser.name;
+    currentUser.username = xss(value.username) || currentUser.username;
 
     // Save the updated user
     await currentUser.save();
@@ -189,8 +190,8 @@ router.put("/:id", authMiddleware, async (req, res) => {
     }
 
     // Update the user's information
-    currentUser.name = value.name || currentUser.name;
-    currentUser.username = value.username || currentUser.username;
+    currentUser.name = xss(value.name) || currentUser.name;
+    currentUser.username = xss(value.username) || currentUser.username;
 
     // Save the updated user
     await currentUser.save();
