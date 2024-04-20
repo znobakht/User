@@ -5,9 +5,12 @@ import app from "../app.mjs"; // Import your Express app
 import User from "../models/User.mjs"; // Import your User model
 
 describe("POST /users", () => {
+  // Store reference to the MongoDB connection
+  let db;
+
   // Connect to a test database before running the tests
   beforeAll(async () => {
-    await mongoose.connect("mongodb://localhost:27017/testdb", {
+    db = await mongoose.connect("mongodb://localhost:27017/testdb", {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
@@ -20,7 +23,7 @@ describe("POST /users", () => {
 
   // Disconnect from the test database after all tests are done
   afterAll(async () => {
-    await mongoose.connection.close();
+    await db.disconnect();
   });
 
   it("should register a new user", async () => {

@@ -27,7 +27,14 @@
       "**/__tests__/**/*.mjs",
       "**/?(*.)+(spec|test).mjs"
     ],
-    "transform": {},
+    "transform": {
+      "^.+\\.m?js$": "babel-jest"
+    },
     "testEnvironment": "node"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.4",
+    "@babel/preset-env": "^7.24.4",
+    "babel-jest": "^29.7.0"
   }
 }
