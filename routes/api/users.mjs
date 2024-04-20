@@ -205,4 +205,24 @@ router.put("/:id", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+router.delete("/:id", authMiddleware, async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    // Find the user by ID and delete it
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Respond with success message
+    res.json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 export default router;
