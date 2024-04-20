@@ -1,6 +1,9 @@
 // app.mjs
 import express from "express";
-import userRouter from "./routes/api/users.mjs"
+import dotenv from "dotenv";
+dotenv.config();
+
+import userRouter from "./routes/api/users.mjs";
 
 const app = express();
 
