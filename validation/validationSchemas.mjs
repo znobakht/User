@@ -16,3 +16,9 @@ export const loginSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().required(),
 });
+
+// Define the schema for editing user information, user can only edit it's name and username
+export const editUserSchema = Joi.object({
+  name: Joi.string().min(3).max(30),
+  username: Joi.string().alphanum().min(3).max(30)
+});

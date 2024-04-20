@@ -1,7 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { loginSchema, registrationSchema } from "../../validation/validationSchemas.mjs";
+import { editUserSchema, loginSchema, registrationSchema } from "../../validation/validationSchemas.mjs";
 import User from "../../models/User.mjs";
 import authMiddleware from "../../middleware/authMiddleware.mjs";
 
@@ -116,5 +116,36 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+router.put("/", authMiddleware, async (req, res) => {
+  const { error, value } = editUserSchema.validate(req.body);
+  if (error) {
+    return res
+      .status(400)
+      .json({ error: error.details.map((detail) => detail.message) });
+  }
 
+  try {
+    // Find the current user by id
+    const currentUser = await User.findById(req.user.userId);
+    if (!currentUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Update the user's information
+    currentUser.name = value.name || currentUser.name;
+    currentUser.username = value.username || currentUser.username;
+
+    // Save the updated user
+    await currentUser.save();
+
+    // Respond with success message
+    res.json({
+      message: "User updated successfully",
+      user: { name: currentUser.name, username: currentUser.username },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 export default router;
