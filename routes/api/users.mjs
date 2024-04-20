@@ -168,4 +168,40 @@ router.put("/", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+/**it is unsecure to edit user with id, this must only be allowed for admins */
+router.put("/:id", authMiddleware, async (req, res) => {
+  const userId = req.params.id;
+  const { error, value } = editUserSchema.validate(req.body);
+  if (error) {
+    return res
+      .status(400)
+      .json({ error: error.details.map((detail) => detail.message) });
+  }
+
+  try {
+    // Find the user by id
+    const currentUser = await User.findById(userId);
+    // const currentUser = await User.findById(req.user.userId);
+    if (!currentUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Update the user's information
+    currentUser.name = value.name || currentUser.name;
+    currentUser.username = value.username || currentUser.username;
+
+    // Save the updated user
+    await currentUser.save();
+
+    // Respond with success message
+    res.json({
+      message: "User updated successfully",
+      user: { name: currentUser.name, username: currentUser.username },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 export default router;
