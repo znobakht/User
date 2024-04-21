@@ -22,7 +22,7 @@ app.use("/users", userRouter);
 
 // Start the server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 (async () => {
@@ -35,3 +35,8 @@ app.listen(PORT, () => {
     console.error("Error connecting to MongoDB:", error);
   }
 })();
+
+export default app
+
+export {server}
+
