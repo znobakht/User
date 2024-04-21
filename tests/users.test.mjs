@@ -22,7 +22,7 @@ describe("POST /users", () => {
     console.log("Connected successfully to server");
     db = client.db(dbName);
     collection = db.collection("users");
-    await collection.deleteMany({});
+    await collection.deleteMany({ username: "testuser" });
   }, 10000);
 
   // Clear the User collection after each test
