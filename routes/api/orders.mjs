@@ -17,19 +17,19 @@ router.post("/", authMiddleware, async (req,res)=>{
       const { productName, address, quantity, pricePerUnit } = value;
       const newOrder = new Order({
         customerName: req.user.name,
-        customerId: req.user._id,
+        customerId: req.user.userId,
         address: xss(address),
         productName: xss(productName),
         quantity: xss(quantity),
         pricePerUnit: xss(pricePerUnit),
       });
 
-      const saved = await newOrder.save();
+      await newOrder.save();
       console.log(newOrder);
       res.json({
         code: "1",
         message: "Order created successfully",
-        order: saved,
+        newOrder,
       });
     } catch (error) {
       console.error(error);
