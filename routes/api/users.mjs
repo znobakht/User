@@ -1,7 +1,11 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { editUserSchema, loginSchema, registrationSchema } from "../../validation/userValidationSchemas.mjs";
+import {
+  editUserSchema,
+  loginSchema,
+  registrationSchema,
+} from "../../validation/userValidationSchemas.mjs";
 import User from "../../models/User.mjs";
 import authMiddleware from "../../middleware/authMiddleware.mjs";
 import xss from "xss";
@@ -78,7 +82,7 @@ router.post("/login", async (req, res) => {
 
     // Password is correct, generate JWT token
     const token = jwt.sign(
-      { userId: user._id, email: user.email, name:user.name },
+      { userId: user._id, email: user.email, name: user.name },
       process.env.JWT_SECRET,
       { expiresIn: "1h" } // Token expires in 1 hour
     );
@@ -112,11 +116,11 @@ router.get("/", authMiddleware, async (req, res) => {
       users,
       currentPage: page,
       totalPages,
-      totalUsers
+      totalUsers,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 // Route to get a user by ID
@@ -155,16 +159,21 @@ router.put("/", authMiddleware, async (req, res) => {
     }
 
     // Update the user's information
-    currentUser.name = xss(value.name) || currentUser.name;
-    currentUser.username = xss(value.username) || currentUser.username;
+    let { name, username } = value;
+
+    currentUser = {
+      ...currentUser,
+      name: xss(name) || currentUser.name,
+      username: xss(username) || currentUser.username,
+    };
 
     // Save the updated user
     await currentUser.save();
-
+    ({ name, username } = currentUser);
     // Respond with success message
     res.json({
       message: "User updated successfully",
-      user: { name: currentUser.name, username: currentUser.username },
+      user: { name, username },
     });
   } catch (error) {
     console.error(error);
@@ -191,16 +200,21 @@ router.put("/:id", authMiddleware, async (req, res) => {
     }
 
     // Update the user's information
-    currentUser.name = xss(value.name) || currentUser.name;
-    currentUser.username = xss(value.username) || currentUser.username;
+    const { name, username } = value;
+
+    currentUser = {
+      ...currentUser,
+      name: xss(name) || currentUser.name,
+      username: xss(username) || currentUser.username,
+    };
 
     // Save the updated user
     await currentUser.save();
-
+    ({ name, username } = currentUser);
     // Respond with success message
     res.json({
       message: "User updated successfully",
-      user: { name: currentUser.name, username: currentUser.username },
+      user: { name, username },
     });
   } catch (error) {
     console.error(error);
