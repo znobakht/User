@@ -1,8 +1,8 @@
 version: "3"
 services:
        login-app:
-           container_name: userOrder
-           image: userOrder
+           container_name: userorder
+           image: userorder
            restart: always
            build: .
            ports:

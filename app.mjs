@@ -11,6 +11,7 @@ import cors from "cors";
 app.use(cors());
 
 import userRouter from "./routes/api/users.mjs";
+import orderRouter from "./routes/api/orders.mjs"
 import helmet from "helmet";
 
 
@@ -20,6 +21,7 @@ app.use(express.json());
 
 // Use the routers
 app.use("/users", userRouter);
+app.use("/orders", orderRouter);
 
 //using helmet
 app.use(helmet());

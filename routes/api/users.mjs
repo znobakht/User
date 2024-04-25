@@ -1,7 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { editUserSchema, loginSchema, registrationSchema } from "../../validation/validationSchemas.mjs";
+import { editUserSchema, loginSchema, registrationSchema } from "../../userValidation/validationSchemas.mjs";
 import User from "../../models/User.mjs";
 import authMiddleware from "../../middleware/authMiddleware.mjs";
 import xss from "xss";
@@ -46,6 +46,7 @@ router.post("/", async (req, res) => {
 
     // Respond with success message
     res.json({
+      code: "1",
       message: "User registered successfully",
       user: userWithoutPassword,
     });
