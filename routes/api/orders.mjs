@@ -99,34 +99,26 @@ router.put("/:id", authMiddleware, async (req, res) => {
   }
 
   try {
-    // Find the order by id
-    const wantedOrder = await Order.findOne({
-      _id: orderId,
-      customerId: req.user.userId,
-    });
+    const value1 = {
+      ...value,
+      address: xss(value.address),
+      productName: xss(value.productName),
+    };
+    let wantedOrder = await Order.findOneAndUpdate(
+      {
+        _id: orderId,
+        customerId: req.user.userId,
+      },
+      { $set: value1 }, // Update
+      { new: true }
+    );
     if (!wantedOrder) {
       return res.status(404).json({ error: "Order not found" });
     }
 
-    // Update the order's information
-    let { address, productName, pricePerUnit, quantity } = value;
-
-    wantedOrder = {
-      ...wantedOrder,
-      address: xss(address) || wantedOrder.address,
-      productName: xss(productName) || wantedOrder.productName,
-      pricePerUnit: pricePerUnit || wantedOrder.pricePerUnit,
-      quantity: quantity || wantedOrder.quantity,
-    };
-
-    // Save the updated user
-    await wantedOrder.save();
-
-    ({ address, productName, pricePerUnit, quantity } = wantedOrder);
-    // Respond with success message
     res.json({
       message: "Order updated successfully",
-      order: { address, productName, pricePerUnit, quantity },
+      order: wantedOrder,
     });
   } catch (error) {
     console.error(error);
