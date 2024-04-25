@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "67fd5902-f13e-4d95-b233-3df56f2e6c04",
-		"name": "Saya",
+		"name": "userOrder",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "7683437"
 	},

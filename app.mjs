@@ -31,7 +31,7 @@ const server = app.listen(PORT, () => {
 (async () => {
   try {
     const dbAddress = process.env.mongoURL || "mongodb://mongo:27017";
-    await mongoose.connect(`${dbAddress}/SayaDatabase`);
+    await mongoose.connect(`${dbAddress}/UserDatabase`);
 
     console.log("Connected to MongoDB");
   } catch (error) {

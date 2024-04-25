@@ -1,8 +1,8 @@
 version: "3"
 services:
        login-app:
-           container_name: saya
-           image: saya
+           container_name: userOrder
+           image: userOrder
            restart: always
            build: .
            ports:
