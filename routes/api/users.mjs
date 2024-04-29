@@ -16,6 +16,8 @@ router.post("/", async (req, res) => {
   const { error, value } = registrationSchema.validate(req.body);
   if (error) {
     // Return validation errors
+        console.log(error.details.map((detail) => detail.message));
+
     return res
       .status(400)
       .json({ error: error.details.map((detail) => detail.message) });
@@ -62,6 +64,7 @@ router.post("/", async (req, res) => {
 router.post("/login", async (req, res) => {
   const { error, value } = loginSchema.validate(req.body);
   if (error) {
+    console.log(error.details.map((detail) => detail.message));
     return res
       .status(400)
       .json({ error: error.details.map((detail) => detail.message) });
