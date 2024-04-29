@@ -15,6 +15,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.5.0",
     "mongoose": "^8.3.2",
+    "pdfkit": "^0.15.0",
     "supertest": "^6.3.4",
     "xss": "^1.0.15"
   },

@@ -8,6 +8,7 @@ import {
 import Order from "../../models/Order.mjs";
 import mongoose from "mongoose";
 const router = express.Router();
+import PDFDocument from "pdfkit";
 
 router.post("/", authMiddleware, async (req, res) => {
   const { error, value } = createOrderSchema.validate(req.body);
@@ -84,6 +85,47 @@ router.get("/:id", authMiddleware, async (req, res) => {
 
     // Respond with the user information
     res.json({ order });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+router.get("/pdf/:id", async (req, res) => {
+  const orderId = req.params.id;
+  try {
+    // Query the database for the order by ID
+    const order = await Order.findOne({
+      _id: orderId,
+    });
+
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    // Generate PDF
+    const pdfDoc = new PDFDocument();
+    pdfDoc.text(`
+    Order ID: ${orderId}
+    Customer ID : ${order.customerId}
+    Customer Name: ${order.customerName}
+    Address: ${order.address}
+    ProductName: ${order.productName}
+    Quantity: ${order.quantity}
+    PricePerUnit: ${order.pricePerUnit}
+    CreatedAt: ${order.createdAt}
+    `);
+    // Add more order details to the PDF as needed
+
+    // Set response headers for PDF
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="order_${orderId}.pdf"`
+    );
+
+    // Pipe PDF output to response
+    pdfDoc.pipe(res);
+    pdfDoc.end();
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
